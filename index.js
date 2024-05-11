@@ -2,14 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 require("dotenv").config();
-const jwt = require('jsonwebtoken')
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5000;
 
 app.use(cors())
 app.use(express.json())
-
-// C8lxJvfA0RCcX7nr
-// rtLibraryManagementServer
 
 
 
@@ -28,11 +24,21 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+    await client.connect();
 
-    
+    const booksCollection = client.db("libraryBooksdb").collection("books");
 
 
+    app.get("/allBooks",async(req,res)=>{
+      const result = await booksCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.post("/addBooks", async (req, res) => {
+      const bookInfo = req.body;
+      const result = await booksCollection.insertOne(bookInfo);
+      res.send(result);
+    })
 
 
 
@@ -52,10 +58,10 @@ run().catch(console.dir);
 
 
 app.get("/", (req, res) => {
-    res.send("Book library server is running")
+  res.send("Book library server is running")
 })
 
 
 app.listen(port, () => {
-    console.log(`server is running from: ${port}`);
+  console.log(`server is running from: ${port}`);
 })
