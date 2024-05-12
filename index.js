@@ -27,8 +27,10 @@ async function run() {
     await client.connect();
 
     const booksCollection = client.db("libraryBooksdb").collection("books");
+    const borrowCollection = client.db("libraryBooksdb").collection("borrowBooks");
 
 
+    // all book related apis
     app.get("/allBooks",async(req,res)=>{
       const result = await booksCollection.find().toArray()
       res.send(result)
@@ -42,12 +44,26 @@ async function run() {
       res.send(result)
     })
 
+    
     app.post("/addBooks", async (req, res) => {
       const bookInfo = req.body;
       const result = await booksCollection.insertOne(bookInfo);
       res.send(result);
     })
-
+    
+    app.patch("/addBooks/:id",async(req,res)=>{
+      const id = req.params.id
+      const bookInfo = req.body
+      const filter = {_id: new ObjectId(id)}
+      const updateQuantity = {
+        $set:{
+          quantity: parseInt(bookInfo.quantity) - 1,
+        }
+      }
+      const result = await booksCollection.updateOne(filter, updateQuantity);
+      res.send(result)
+    })
+    
     app.put("/addBooks/:id",async(req,res)=>{
       const id = req.params.id
       const updatedBook = req.body
@@ -67,6 +83,18 @@ async function run() {
     })
 
 
+    // borrow book related apis
+    app.get("/allBorrowBooks/:email",async(req,res)=>{
+      const query = {email: req.params.email};
+      const result = await borrowCollection.find(query).toArray();
+      res.send(result)
+    })
+
+    app.post("/addBorrowBooks",async(req,res)=>{
+      const bookInfo = req.body;
+      const result = await borrowCollection.insertOne(bookInfo);
+      res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
