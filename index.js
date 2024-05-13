@@ -37,6 +37,14 @@ async function run() {
       res.send(result)
     })
 
+    app.get("/bookOfCategory/:bookCategory", async (req, res) => {
+      const query = req.params.bookCategory
+      const filter = {bookCategory: query}
+      console.log(query);
+      const result = await booksCollection.find(filter).toArray();
+      res.send(result);
+  })
+
 
     // all book related apis
     app.get("/allBooks",async(req,res)=>{
