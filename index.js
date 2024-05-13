@@ -57,7 +57,7 @@ async function run() {
       const filter = {_id: new ObjectId(id)}
       const updateQuantity = {
         $set:{
-          quantity: parseInt(bookInfo.quantity) - 1,
+          quantity: bookInfo.quantity
         }
       }
       const result = await booksCollection.updateOne(filter, updateQuantity);
@@ -96,7 +96,7 @@ async function run() {
       res.send(result);
     })
 
-    app.delete("/addBorrowBooks/:id",async(req,res)=>{
+    app.delete("/allBorrowBooks/:id",async(req,res)=>{
       const id = req.params.id
       const query = {_id: new ObjectId(id)}
       const result = await borrowCollection.deleteOne(query)
