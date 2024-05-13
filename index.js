@@ -28,6 +28,14 @@ async function run() {
 
     const booksCollection = client.db("libraryBooksdb").collection("books");
     const borrowCollection = client.db("libraryBooksdb").collection("borrowBooks");
+    const categoryCollection = client.db("libraryBooksdb").collection("category");
+
+    // category related apis
+    app.get("/allCategories",async(req,res)=>{
+      const cursor = categoryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
 
 
     // all book related apis
